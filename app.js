@@ -11,6 +11,7 @@ const { v4: uuidv4 } = require('uuid');
 //Utils
 const sequelize = require('./util/database');
 const app = express();
+require('dotenv').config();
 
 //Models
 
@@ -218,8 +219,12 @@ sequelize
 	.sync()
 
 	.then(() => {
-		app.listen(port, '0.0.0.0', () => {
-			console.log('Connected to database' + port);
+		app.listen(port, function () {
+			console.log(
+				'Express server listening on port %d in %s mode',
+				this.address().port,
+				app.settings.env
+			);
 		});
 	})
 	.catch((err) => console.log('Fail to connect to the database ' + err));

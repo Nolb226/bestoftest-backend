@@ -2,14 +2,14 @@ const Sequelize = require('sequelize');
 require('dotenv').config();
 
 const sequelize = new Sequelize(
-	'bestoftest',
-	'qlttngroup5',
-	'bestoftestgroup5',
+	process.env.DB_NAME || 'bestoftest',
+	process.env.DB_USERNAME || 'qlttngroup5',
+	process.env.DB_PASSWORD || 'bestoftestgroup5',
 	{
-		host: 'db4free.net',
+		host: process.env.DB_HOST || 'localhost',
 
 		dialect: 'mysql',
-		port: '3306',
+		port: process.env.DB_PORT || '3306',
 	}
 );
 module.exports = sequelize;
