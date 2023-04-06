@@ -219,5 +219,4 @@ sequelize
 			console.log('Connected to database' + port);
 		});
 	})
-
 	.catch((err) => console.log('Fail to connect to the database ' + err));
