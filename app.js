@@ -1,4 +1,5 @@
 'use strict';
+const port = process.env.PORT || 8080;
 
 //Packages
 const path = require('path');
@@ -207,8 +208,8 @@ app.use('/classes', classesRoutes);
 app.use('/chapters', chaptersRoutes);
 app.use('/test', testRoutes);
 //App start when connected to database
+console.log(port);
 
-var port = process.env.PORT || 8080;
 sequelize
 	// .sync({ force: true })
 	.sync()
