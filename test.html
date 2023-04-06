@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../client/assets/css/reset.css">
+    <link rel="stylesheet" href="../client/assets/css/base.css">
+    <link rel="stylesheet" href="../client/assets/css/grid.css">
+    <link rel="stylesheet" href="../client/assets/css/dashboard/student/style.css">
+    <link rel="stylesheet" href="../client/assets/css/dashboard/student/responsive.css">
+    <link rel="stylesheet" href="../client/assets/css/dashboard/dashboard.css">
+    <link rel="stylesheet" href="../client/assets/fonts/fontawesome-free-6.1.2-web/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
+    <title>Test</title>
+</head>
+
+<body>
+    <div id="main-layout" class="grid wide">
+        <div class="row no-gutters layout--body">
+            <div id="left-menu" class="position-relative col l-1">
+                <ul class="menu-list flex-center flex-direction-col">
+                    <li class="menu-item active flex-center">
+                        <i class="menu-icon fa-solid fa-file-pen"></i>
+                    </li>
+
+                    <li class="menu-item flex-center">
+                        <i class="menu-icon fa-solid fa-plus"></i>
+                    </li>
+
+                </ul>
+
+                <div class="themes flex-center position-absolute">
+                    <i class="menu-icon fa-solid fa-circle-half-stroke"></i>
+
+                    <ul class="themes-list">
+
+                    </ul>
+                </div>
+            </div>
+
+            <div id="container" class="col l-11">
+                <div class="top-bar">
+                    <header class="header flex-center position-relative">
+                        <div class="header__logo">
+                            <img src="../assets/image/BestOfTest.png" alt="Logo Best of Test">
+                        </div>
+                        <div class="navigation flex-center">
+                            <ul class="nav__list flex-center">
+                                <li class="nav__item flex-center" alt="Viet Nam flag" title="Viet Nam">
+                                    <img src="../assets/image/Flag_of_Vietnam.png" alt="">
+                                </li>
+
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-bell"></i>
+                                </li>
+
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-user"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </header>
+                    <div class="information">
+                        <div class="code inf-children">
+                            Mã cá nhân: 3121411320
+                        </div>
+                        <div class="name inf-children">
+                            Họ và tên: Nguyễn Văn A
+                        </div>
+
+                        <div class="subject inf-children">
+                            Môn học: Kỹ thuật lập trình
+                        </div>
+
+                        <div class="number-of-question name inf-children">
+                            Bài thi: Test 2
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content">
+
+                    <div class="empty-space"></div>
+
+                    <div class="grid content-table">
+                        <div class="question-list">
+
+                        </div>
+                        <div class="answer-list">
+                            <div class="answer-header flex-center">BÀI LÀM</div>
+                            <div class="answer-grid">
+
+                            </div>
+                            <div class="time-test flex-center">
+                                Thời gian làm bài còn 45 phút 30 giây
+                            </div>
+                            <div class="test-submit flex-center">
+                                <button class="test-submit-btn">
+                                    Nộp bài
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    async function render() {
+        let answer = document.querySelector('.answer-grid');
+        let question = document.querySelector('.question-list');
+        const res = await fetch('http://localhost:8080/questions/?chapters=WEBC1');
+        const questions = await res.json();
+        list = questions.data;
+
+
+        for (let i = 0; i < list.length; i++) {
+            if (i < 10) {
+                answer.innerHTML +=
+                    `<li class="answer-item answer-item-${i + 1}" >
+                    <span>0${i + 1}.</span>
+                    <select  data-value="${i + 1}">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>     
+                    </select>
+                </li>`;
+            } else {
+                answer.innerHTML +=
+                    `<li class="answer-item answer-item-${i + 1}" ">
+                    <span>${i + 1}.</span>
+                    <select data-value="${i + 1}">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>     
+                    </select>
+                </li>`;
+            }
+
+            question.innerHTML +=
+                `<div class="question-item">
+                <div class="question-item-content">
+                    Câu ${i + 1}: ${list[i].description}
+                </div>
+                <div class="question-item-suggest">
+                    
+                    <label class="ABCD" data-value="${i + 1}" for="A${i + 1}">
+                        <div class="radio ABCD-children"><input type="radio" value="A" name="answers${i + 1}" id="A${i + 1}">A. </div>
+                        <div class="content-suggest ABCD-children">${list[i].answerA.replace('<', '&lt')}</div>
+                    </label>
+
+                    <label class="ABCD" data-value="${i + 1}"  for="B${i + 1}">
+                        <div class="radio ABCD-children"><input type="radio" value="B" name="answers${i + 1}" id="B${i + 1}">B. </div>
+                        <div class="content-suggest ABCD-children">${list[i].answerB.replace('<', '&lt')}</div>
+                    </label>
+
+                    <label class="ABCD" data-value="${i + 1}"  for="C${i + 1}">
+                        <div class="radio ABCD-children"><input type="radio" value="C" name="answers${i + 1}" id="C${i + 1}">C. </div>
+                        <div class="content-suggest ABCD-children">${list[i].answerC.replace('<', '&lt')}</div>
+                    </label>
+                    
+                    <label class="ABCD" data-value="${i + 1}"  for="D${i + 1}">
+                        <div class="radio ABCD-children"><input type="radio" value="D" name="answers${i + 1}" id="D${i + 1}">D.</div> 
+                        <div class="content-suggest ABCD-children">${list[i].answerD.replace('<', '&lt')}</div>
+                    </label>
+                </div>
+            </div>`
+
+        }
+    }
+
+    render();
+
+    const questionList = document.querySelector('.question-list');
+
+    questionList.addEventListener('click', (e) => {
+        const clickedLabel = e.target.closest('.ABCD')
+        if (!clickedLabel) return;
+        if (!e.target.value) return;
+        const questionValue = e.target.value
+        const questionNumber = clickedLabel.dataset.value
+
+        const select = document.querySelector(`.answer-item-${questionNumber} select`);
+        select.style.backgroundColor = 'var(--highlight-color)';
+        select.value = questionValue
+    })
+
+    const grid = document.querySelector('.answer-grid');
+
+    grid.addEventListener('change', (e) => {
+        const changedSelected = e.target;
+        const selectedValue = changedSelected.value;
+        const questionNumber = changedSelected.dataset.value;
+        const question = document.querySelector(`#${selectedValue}${questionNumber}`)
+        question.checked = true;
+        changedSelected.style.backgroundColor = 'var(--highlight-color)';
+    })
+
+</script>
+
+</html>
