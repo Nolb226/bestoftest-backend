@@ -9,7 +9,7 @@ const sequelize = new Sequelize(
 		host: 'db4free.net',
 
 		dialect: 'mysql',
-		port: '3306',
+		port: process.env.PORT || '3306',
 	}
 );
 module.exports = sequelize;
