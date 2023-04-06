@@ -218,7 +218,7 @@ sequelize
 	.sync()
 
 	.then(() => {
-		app.listen(port, () => {
+		app.listen(port, '0.0.0.0', () => {
 			console.log('Connected to database' + port);
 		});
 	})
