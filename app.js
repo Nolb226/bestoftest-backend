@@ -207,13 +207,16 @@ app.use('/classes', classesRoutes);
 app.use('/chapters', chaptersRoutes);
 app.use('/test', testRoutes);
 //App start when connected to database
+
+var port = process.env.PORT || 8080;
 sequelize
 	// .sync({ force: true })
 	.sync()
 
 	.then(() => {
-		app.listen(process.env.PORT || 8080);
-		console.log('Connected to database');
+		app.listen(port, () => {
+			console.log('Connected to database' + port);
+		});
 	})
 
 	.catch((err) => console.log('Fail to connect to the database ' + err));
