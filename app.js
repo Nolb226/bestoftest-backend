@@ -209,6 +209,9 @@ app.use('/chapters', chaptersRoutes);
 app.use('/test', testRoutes);
 //App start when connected to database
 console.log(port);
+app.get('/', (req, res) => {
+	res.send(Hiii);
+});
 
 sequelize
 	// .sync({ force: true })
