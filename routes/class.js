@@ -11,7 +11,7 @@ const Class = require('../models/class');
 const { errorResponse, throwError } = require('../util/helper');
 const Lecture = require('../models/lecture');
 //METHOD : GET
-// router.use(isAuth, isWho);
+router.use(isAuth, isWho);
 
 const passingClass = async (req, res, next) => {
 	try {

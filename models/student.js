@@ -45,16 +45,25 @@ Student.createAccount = async function (studentData) {
 			fullname,
 			majorId: foreignKey,
 		});
+		if (!student) {
+			throwError(`Database`, 500);
+		}
 
 		const permission = await Permission_Group.findOne({
 			where: { name: 'SV' },
 		});
+		if (!permission) {
+			throwError('Group permission not found', 404);
+		}
+		console.log(permission);
 
-		await account.addPermission(permission);
-		await student.setAccount(account);
+		await student?.setAccount(account);
+		await permission.addAccount(account);
+
 		const result = await Student.findOne({ where: { id }, include: Account });
 		return result;
 	} catch (error) {
+		console.log(error);
 		throwError(error.message, 401);
 	}
 };

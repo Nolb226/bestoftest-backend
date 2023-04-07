@@ -149,7 +149,7 @@ require('dotenv').config();
 
 	Account.belongsTo(Permission_Group, {
 		timestamps: false,
-		as: 'permissions',
+		// as: 'permissions',
 	});
 	Permission_Group.hasMany(Account, {
 		timestamps: false,
