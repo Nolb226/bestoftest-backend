@@ -147,13 +147,11 @@ require('dotenv').config();
 	Class.hasMany(Notification);
 	Notification.belongsTo(Class);
 
-	Account.belongsToMany(Permission_Group, {
-		through: 'groupdetail',
+	Account.belongsTo(Permission_Group, {
 		timestamps: false,
 		as: 'permissions',
 	});
-	Permission_Group.belongsToMany(Account, {
-		through: 'groupdetail',
+	Permission_Group.hasMany(Account, {
 		timestamps: false,
 	});
 
