@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 require('dotenv').config();
 
 let sequelize;
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'production') {
 	sequelize = new Sequelize(
 		'mysql://qs8bzb9tli4g3ip6:t562arn3ylweb754@grp6m5lz95d9exiz.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/dy0jhdljqz4f0tqo',
 		{
@@ -11,12 +11,13 @@ if (process.env.NODE_ENV === 'test') {
 	);
 	console.log(process.env.NODE_ENV);
 }
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'test') {
 	sequelize = new Sequelize('hoang', 'root', '', {
 		host: 'localhost',
 		dialect: 'mysql',
 		port: '3307',
 	});
+	console.log(process.env.NODE_ENV);
 }
 
 // const sequelize = new Sequelize(
