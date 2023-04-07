@@ -10,14 +10,15 @@ if (process.env.NODE_ENV === 'test') {
 		}
 	);
 	console.log(process.env.NODE_ENV);
-} else {
+}
+if (process.env.NODE_ENV === 'production') {
 	sequelize = new Sequelize('hoang', 'root', '', {
 		host: 'localhost',
 		dialect: 'mysql',
 		port: '3307',
 	});
-	console.log(2);
 }
+
 // const sequelize = new Sequelize(
 // 	process.env.DB_NAME || 'bestoftest',
 // 	process.env.DB_USERNAME || 'qlttngroup5',
