@@ -43,8 +43,8 @@ require('dotenv').config();
 	Department.hasMany(Major);
 	Major.belongsTo(Department);
 
-	Major.belongsToMany(Lecture, { through: 'lectureDetail' });
-	Lecture.belongsToMany(Major, { through: 'lectureDetail' });
+	Major.belongsToMany(Lecture, { through: 'lecturedetail' });
+	Lecture.belongsToMany(Major, { through: 'lecturedetail' });
 
 	Lecture.hasMany(Chapter);
 	Chapter.belongsTo(Lecture);
@@ -158,11 +158,11 @@ require('dotenv').config();
 	});
 
 	Permission_Group.belongsToMany(Function, {
-		through: 'functionDetail',
+		through: 'functiondetail',
 		timestamps: false,
 	});
 	Function.belongsToMany(Permission_Group, {
-		through: 'functionDetail',
+		through: 'functiondetail',
 		timestamps: false,
 	});
 })();

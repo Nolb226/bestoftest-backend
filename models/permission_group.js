@@ -1,7 +1,7 @@
 const sequelize = require('../util/database');
 const { DataTypes } = require('sequelize');
 
-const Permission_Group = sequelize.define('permissionGroup', {
+const Permission_Group = sequelize.define('permissiongroup', {
 	id: {
 		type: DataTypes.INTEGER,
 		autoIncrement: true,
