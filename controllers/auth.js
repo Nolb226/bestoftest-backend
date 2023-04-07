@@ -44,7 +44,7 @@ exports.signup = async (req, res, next) => {
 			foreignKey,
 		});
 
-		return successResponse(res, 201, account, req.method);
+		return successResponse(res, 201, '', req.method);
 	} catch (error) {
 		errorResponse(res, error);
 		console.log(error);

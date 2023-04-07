@@ -42,11 +42,17 @@ Teacher.createAccount = async function (teacherData) {
 			dob,
 			departmentId: foreignKey,
 		});
+		if (!student) {
+			throwError(`Database`, 500);
+		}
 		const permission = await Permission_Group.findOne({
 			where: { name: 'GV' },
 		});
+		if (!permission) {
+			throwError('Group permission not found', 404);
+		}
+		await permission.addAccount(account);
 
-		await account.addPermission(permission);
 		await teacher.setAccount(account);
 		const result = await Teacher.findOne({ id, include: Account });
 

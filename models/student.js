@@ -55,12 +55,14 @@ Student.createAccount = async function (studentData) {
 		if (!permission) {
 			throwError('Group permission not found', 404);
 		}
-		console.log(permission);
 
 		await student?.setAccount(account);
 		await permission.addAccount(account);
 
-		const result = await Student.findOne({ where: { id }, include: Account });
+		const result = await Student.findOne({
+			where: { id },
+			include: [{ model: Account, attribute: ['type'] }],
+		});
 		return result;
 	} catch (error) {
 		console.log(error);

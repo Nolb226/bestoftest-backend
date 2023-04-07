@@ -25,6 +25,7 @@ const Department = require('../models/department');
 const Teacher = require('../models/teacher');
 const Lecture = require('../models/lecture');
 const Student_Result = require('../models/student_result');
+const Exam = require('../models/exam');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	console.log(file);
@@ -145,6 +146,18 @@ exports.getStudentInClass = async (req, res, _) => {
 	}
 };
 
+exports.getClassesExams = async (req, res, _) => {
+	const { user } = req;
+
+	try {
+		const exams = await user.getClasses({
+			include: [{ model: Exam }],
+			// attributes: [],
+		});
+		successResponse(res, 200, exams);
+	} catch (error) {}
+};
+
 exports.getClassExams = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
@@ -248,6 +261,8 @@ exports.postClass = async (req, res, _) => {
 	}
 };
 
+exports.postClassExam = async (req, res) => {};
+
 exports.putClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
@@ -318,7 +333,6 @@ exports.deleteClass = async (req, res, _) => {
 	if (!classFounded) {
 		throwError('Class not found', 404);
 	}
-
 	await classFounded.destroyClass();
 	successResponse(res, 200, {}, 'DELETE');
 };

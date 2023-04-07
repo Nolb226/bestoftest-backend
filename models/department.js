@@ -1,6 +1,7 @@
 const sequelize = require('../util/database');
 const DataTypes = require('sequelize').DataTypes;
 
+console.log(sequelize);
 const Department = sequelize.define('department', {
 	id: {
 		type: DataTypes.STRING(10),

@@ -41,6 +41,8 @@ router.get(
 	classController.getClasses
 );
 
+router.get('/exams', classController.getClassesExams);
+
 /* 
 *admin&teacher
 GET /classes/{classId}
@@ -117,6 +119,10 @@ router.post(
 	],
 	classController.postClass
 );
+
+router.post('/:classId/exams', [body()]);
+
+router.post('/:classId/exams/students/:studentsId');
 
 router.put(
 	'/:classId',

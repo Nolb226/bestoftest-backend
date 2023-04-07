@@ -24,7 +24,7 @@ const Student_Result = sequelize.define('studentresult', {
 		},
 	},
 	grade: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.FLOAT,
 		allowNull: false,
 	},
 	// isLock: {
