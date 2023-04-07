@@ -6,7 +6,7 @@ const sequelize = new Sequelize(
 	process.env.DB_USERNAME || 'qlttngroup5',
 	process.env.DB_PASSWORD || 'bestoftestgroup5',
 	{
-		host: process.env.DB_HOST || 'localhost',
+		host: process.env.DB_HOST || 'db4free.net',
 
 		dialect: 'mysql',
 		port: process.env.DB_PORT || '3306',

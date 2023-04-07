@@ -11,7 +11,7 @@ const Class = require('../models/class');
 const { errorResponse, throwError } = require('../util/helper');
 const Lecture = require('../models/lecture');
 //METHOD : GET
-router.use(isAuth, isWho);
+// router.use(isAuth, isWho);
 
 const passingClass = async (req, res, next) => {
 	try {
@@ -44,7 +44,7 @@ get specific class
 */
 router.get(
 	'/:classId',
-	checkPermission.bind({ path: 'class' }),
+	// checkPermission.bind({ path: 'class' }),
 	classController.getClass
 );
 
@@ -55,7 +55,7 @@ get all students from the current class
 */
 router.get(
 	'/:classId/students',
-	checkPermission,
+	// checkPermission,
 	classController.getAllStudent
 );
 
