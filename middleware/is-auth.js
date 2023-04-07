@@ -16,11 +16,7 @@ module.exports.isAuth = async (req, res, next) => {
 			include: [
 				{
 					model: Permission_Group,
-					as: 'permissions',
 					attributes: ['name'],
-					through: {
-						attributes: [],
-					},
 					include: [
 						{
 							model: Functions,

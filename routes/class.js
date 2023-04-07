@@ -35,7 +35,11 @@ const passingClass = async (req, res, next) => {
 GET /classes/
 get all classes 
 */
-router.get('/', checkPermission, classController.getClasses);
+router.get(
+	'/',
+	// checkPermission,
+	classController.getClasses
+);
 
 /* 
 *admin&teacher
