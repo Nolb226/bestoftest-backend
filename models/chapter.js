@@ -25,7 +25,7 @@ Chapter.addHook('beforeCreate', async function (chapter) {
 	const lecture = await Lecture.findByPk(lectureId);
 
 	const number = await Question.count({ where: { lectureId } });
-	chapter.id = `${lecture.name}-${number + 1}`;
+	chapter.id = `${lectureId}-${number + 1}`;
 });
 
 Chapter.prototype.addChapterQuestion = async function ({

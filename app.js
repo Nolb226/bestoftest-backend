@@ -181,6 +181,7 @@ const questionsRoutes = require('./routes/question');
 const classesRoutes = require('./routes/class');
 const chaptersRoutes = require('./routes/chapter');
 const testRoutes = require('./routes/test');
+const accountRoutes = require('./routes/account');
 const departmentRoutes = require('./routes/department');
 const majorRoutes = require('./routes/major');
 const lectureRoutes = require('./routes/lecture');
@@ -199,6 +200,7 @@ app.use((req, res, next) => {
 //Routes seperate paths
 
 app.use('/auth', authRoutes);
+app.use('/accounts', accountRoutes);
 app.use('/departments', departmentRoutes);
 app.use('/majors', majorRoutes);
 app.use('/lectures', lectureRoutes);

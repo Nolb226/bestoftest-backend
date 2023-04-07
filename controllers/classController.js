@@ -151,11 +151,16 @@ exports.getClassesExams = async (req, res, _) => {
 
 	try {
 		const exams = await user.getClasses({
-			include: [{ model: Exam }],
-			// attributes: [],
+			include: [{ model: Exam }, { model: Lecture, attributes: ['name'] }],
+			attributes: ['name'],
+			through: [],
+			// raw: true,
+			nest: true,
 		});
 		successResponse(res, 200, exams);
-	} catch (error) {}
+	} catch (error) {
+		errorResponse(res, error);
+	}
 };
 
 exports.getClassExams = async (req, res, _) => {
