@@ -5,14 +5,13 @@
   "main": "app.js",
   "engines": {
     "node": "18.12.1",
-    "npm" :"8.19.2"
+    "npm": "8.19.2"
   },
   "scripts": {
     "test": "set NODE_ENV=test && nodemon app.js",
     "start": "set NODE_ENV=production&&node app.js --host '0.0.0.0' --port $PORT",
     "dev": "nodemon app.js"
   },
-
   "repository": {
     "type": "git",
     "url": "./"
@@ -22,6 +21,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "exceljs": "^4.3.0",

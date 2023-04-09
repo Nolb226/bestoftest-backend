@@ -301,8 +301,9 @@ exports.postClassStudent = async (req, res, _) => {
 			throwError(`Could not find class`, 404);
 			0;
 		}
-		if (password !== foundedClass.password) {
-			throwError(`Wrong password`, 409);
+		const isValid = password === foundedClass.password;
+		if (!isValid || foundedClass.isLock) {
+			throwError(`Could not join class`, 409);
 		}
 		await foundedClass.addStudent(req.user);
 
@@ -347,38 +348,37 @@ exports.putClass = async (req, res, _) => {
 };
 
 exports.putClassStudent = async (req, res, _) => {
-	try {
-		const { classId } = req.params;
-		const classIsFound = await Classes.findByPk(classId);
-		if (!classIsFound) {
-			throwError('Class not found', 404);
-		}
-		const file = req.file;
-		const filePath = file.path;
-		const workbook = XLSX.readFile(
-			path.join(__dirname, '..', 'excels/Book1.xlsx')
-			// filePath
-		);
-		let worksheet = {};
-		worksheet['Sheet1'] = XLSX.utils.sheet_to_json(workbook.Sheets['Sheet1']);
-		const data = worksheet.Sheet1;
-		data.forEach(async (student, number) => {
-			const cuttedDOB = student['ngày sinh'].split('/');
-			const year = cuttedDOB[2];
-			const month = cuttedDOB[1];
-			const day = cuttedDOB[0];
-			await classIsFound.createClassStudent({
-				id: student['MSSV'],
-				dob: new Date(year, month, day),
-				fullname: student['Tên'] || student['Họ tên'],
-				foreignKey: student['chuyên ngành'],
-			});
-		});
-
-		successResponse(res, 200, data);
-	} catch (error) {
-		errorResponse(res, error, [{}]);
-	}
+	// try {
+	// 	const { classId } = req.params;
+	// 	const classIsFound = await Classes.findByPk(classId);
+	// 	if (!classIsFound) {
+	// 		throwError('Class not found', 404);
+	// 	}
+	// 	const file = req.file;
+	// 	const filePath = file.path;
+	// 	const workbook = XLSX.readFile(
+	// 		path.join(__dirname, '..', 'excels/Book1.xlsx')
+	// 		// filePath
+	// 	);
+	// 	let worksheet = {};
+	// 	worksheet['Sheet1'] = XLSX.utils.sheet_to_json(workbook.Sheets['Sheet1']);
+	// 	const data = worksheet.Sheet1;
+	// 	data.forEach(async (student, number) => {
+	// 		const cuttedDOB = student['ngày sinh'].split('/');
+	// 		const year = cuttedDOB[2];
+	// 		const month = cuttedDOB[1];
+	// 		const day = cuttedDOB[0];
+	// 		await classIsFound.createClassStudent({
+	// 			id: student['MSSV'],
+	// 			dob: new Date(year, month, day),
+	// 			fullname: student['Tên'] || student['Họ tên'],
+	// 			foreignKey: student['chuyên ngành'],
+	// 		});
+	// 	});
+	// 	successResponse(res, 200, data);
+	// } catch (error) {
+	// 	errorResponse(res, error, [{}]);
+	// }
 };
 
 exports.deleteClass = async (req, res, _) => {

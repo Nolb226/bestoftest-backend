@@ -6,7 +6,7 @@ const Student = require('../models/student');
 const { throwError, errorResponse } = require('../util/helper');
 module.exports.isAuth = async (req, res, next) => {
 	try {
-		const token = req.get('Authorization').split(' ')[1];
+		const token = req.get('Authorization')?.split(' ')[1];
 		if (!token) {
 			throwError('Invalid authorization', 401);
 		}

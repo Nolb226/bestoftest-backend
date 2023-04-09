@@ -4,6 +4,7 @@ const port = process.env.PORT || 8080;
 //Packages
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
@@ -185,6 +186,7 @@ const accountRoutes = require('./routes/account');
 const departmentRoutes = require('./routes/department');
 const majorRoutes = require('./routes/major');
 const lectureRoutes = require('./routes/lecture');
+const adminRoutes = require('./routes/admin');
 const { checkPermission } = require('./middleware/check-permission');
 //Middleware
 
@@ -199,6 +201,7 @@ app.use((req, res, next) => {
 });
 //Routes seperate paths
 
+app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/accounts', accountRoutes);
 app.use('/departments', departmentRoutes);
@@ -207,6 +210,7 @@ app.use('/lectures', lectureRoutes);
 app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
 app.use('/chapters', chaptersRoutes);
+app.use('/admin', adminRoutes);
 app.use('/test', testRoutes);
 //App start when connected to database
 console.log(port);
