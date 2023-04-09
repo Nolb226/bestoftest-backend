@@ -294,9 +294,15 @@ exports.postClassExam = async (req, res) => {};
 exports.postClassStudent = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
+		const { password } = req.body;
+
 		const foundedClass = await Classes.findByPk(classId);
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
+			0;
+		}
+		if (password !== foundedClass.password) {
+			throwError(`Wrong password`, 409);
 		}
 		await foundedClass.addStudent(req.user);
 
