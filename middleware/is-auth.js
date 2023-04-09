@@ -6,13 +6,13 @@ const Student = require('../models/student');
 const { throwError, errorResponse } = require('../util/helper');
 module.exports.isAuth = async (req, res, next) => {
 	try {
-		// const token = req.get('Authorization').split(' ')[1];
-		// if (!token) {
-		// 	throwError('Invalid authorization', 401);
-		// }
-		// const decodedToken = jwt.verify(token, 'group5');
-		// const { id: accountId } = decodedToken;
-		const user = await Account.findByPk(1, {
+		const token = req.get('Authorization').split(' ')[1];
+		if (!token) {
+			throwError('Invalid authorization', 401);
+		}
+		const decodedToken = jwt.verify(token, 'group5');
+		const { id: accountId } = decodedToken;
+		const user = await Account.findByPk(accountId, {
 			include: [
 				{
 					model: Permission_Group,

@@ -120,6 +120,8 @@ router.post(
 	classController.postClass
 );
 
+router.post('/:classId/students', classController.postClassStudent);
+
 router.post('/:classId/exams', [body()]);
 
 router.post('/:classId/exams/students/:studentsId');

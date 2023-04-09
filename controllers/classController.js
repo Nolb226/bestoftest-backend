@@ -166,12 +166,34 @@ exports.getClassesExams = async (req, res, _) => {
 exports.getClassExams = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		const foundedClass = await Classes.findByPk(classId);
+		const { user } = req;
+		// const foundedClass = await Classes.findByPk(classId);
+		const foundedClass = await user.getClasses({
+			where: { id: classId },
+			include: [
+				{
+					model: Lecture,
+				},
+			],
+		});
+
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
 		}
-		const exams = await foundedClass.getExams();
-		successResponse(res, 200, exams);
+		const exams = await foundedClass[0].getExams({
+			include: [
+				{
+					model: Student_Result,
+					where: { studentId: user.id },
+					attributes: ['isDone'],
+				},
+			],
+			attributes: ['name', 'id', 'duration', 'totalQuestions'],
+			raw: true,
+			nest: false,
+		});
+
+		successResponse(res, 200, { foundedClass, exams });
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -260,6 +282,7 @@ exports.postClass = async (req, res, _) => {
 				lectureId,
 			})
 		);
+
 		successResponse(res, 201, {}, req.method);
 	} catch (error) {
 		errorResponse(res, error);
@@ -267,6 +290,26 @@ exports.postClass = async (req, res, _) => {
 };
 
 exports.postClassExam = async (req, res) => {};
+
+exports.postClassStudent = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Classes.findByPk(classId);
+		if (!foundedClass) {
+			throwError(`Could not find class`, 404);
+		}
+		await foundedClass.addStudent(req.user);
+
+		const newTotal = await classDetails.count({
+			where: { classId: foundedClass.id },
+		});
+		foundedClass.totalStudent = newTotal;
+		await foundedClass.save();
+		successResponse(res, 201, req.user, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 exports.putClass = async (req, res, _) => {
 	try {
@@ -333,11 +376,15 @@ exports.putClassStudent = async (req, res, _) => {
 };
 
 exports.deleteClass = async (req, res, _) => {
-	const { classId } = req.params;
-	const classFounded = await Classes.findByPk(classId);
-	if (!classFounded) {
-		throwError('Class not found', 404);
+	try {
+		const { classId } = req.params;
+		const classFounded = await Classes.findByPk(classId);
+		if (!classFounded) {
+			throwError('Class not found', 404);
+		}
+		await classFounded.destroyClass();
+		successResponse(res, 200, {}, 'DELETE');
+	} catch (error) {
+		errorResponse(res, error);
 	}
-	await classFounded.destroyClass();
-	successResponse(res, 200, {}, 'DELETE');
 };

@@ -13,7 +13,7 @@ if (node_env === 'production') {
 		}
 	);
 	console.log(node_env);
-} else if (node_env === 'test') {
+} else if (node_env === 'test ') {
 	sequelize = new Sequelize('hoang', 'root', '', {
 		host: 'localhost',
 		dialect: 'mysql',
