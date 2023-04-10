@@ -8,7 +8,6 @@ const path = require('path');
 
 const Classes = require('../models/class');
 const classDetails = require('../models/classdetail');
-const Student = require('../models/student');
 
 //helper
 const {
@@ -16,12 +15,7 @@ const {
 	errorResponse,
 	throwError,
 } = require('../util/helper');
-const dayjs = require('dayjs');
-const { log } = require('console');
-const Account = require('../models/account');
-const sequelize = require('../util/database');
-const Major = require('../models/major');
-const Department = require('../models/department');
+
 const Teacher = require('../models/teacher');
 const Lecture = require('../models/lecture');
 const Student_Result = require('../models/student_result');
@@ -44,9 +38,10 @@ exports.getClasses = async (req, res, _) => {
 
 		const classes = await user.getClasses({
 			include: [
-				{ model: Teacher, attributes: ['id', 'fullname', 'departmentId'] },
-				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
+				{ model: Teacher, attributes: ['id', 'fullname'] },
+				{ model: Lecture, attributes: ['id', 'name'] },
 			],
+			attributes: ['id', 'name'],
 			offset: pageSize * (page - 1),
 			limit: pageSize,
 		});
@@ -62,9 +57,10 @@ exports.getClass = async (req, res, _) => {
 		const { classId } = req.params;
 		const foundedClass = await Classes.findByPk(classId, {
 			include: [
-				{ model: Teacher, attributes: ['id', 'fullname', 'departmentId'] },
+				{ model: Teacher, attributes: ['id', 'fullname'] },
 				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
 			],
+			attributes: ['year', 'id', 'name', 'semester'],
 		});
 		// console.log(foundedClass);
 		if (!foundedClass) {
@@ -78,7 +74,8 @@ exports.getClass = async (req, res, _) => {
 
 exports.getAllStudent = async (req, res, _) => {
 	try {
-		// console.log(req.path);
+		const page = req.query.page || 1;
+		const perPage = 10;
 		const errors = validationResult(req);
 
 		if (!errors.isEmpty()) {
@@ -91,38 +88,28 @@ exports.getAllStudent = async (req, res, _) => {
 		const { classId } = req.params;
 
 		const classDetail = await Classes.findByPk(classId);
+		if (!classDetail) {
+			throwError(`Could not find class`, 404);
+		}
 		const students = await classDetail.getStudents({
-			attributes: [
-				'id',
-				'dob',
-				'fullname',
-				'majorId',
-				// [sequelize.literal('Account.isActive'), 'isActive'],
-				// [sequelize.literal('Account.type'), 'type'],
-			],
+			attributes: ['id', 'dob', 'fullname', 'majorId'],
 			include: [
 				{
-					model: Account,
-					// attributes: [],
-					attributes: ['isActive', 'type'],
+					model: Student_Result,
+					attributes: ['grade'],
 				},
-				// {
-				// 	model: Major,
-				// 	attributes: ['id', 'name'],
-				// 	include: [
-				// 		{
-				// 			model: Department,
-				// 			attributes: ['id', 'name'],
-				// 		},
-				// 	],
-				// },
 			],
-			through: {
-				attributes: [],
-			},
+			joinTableAttributes: [],
+			// raw: true,
+			// nest: true,
+			offset: (page - 1) * perPage,
+			limit: perPage,
 		});
+		const totals = await classDetails.count({ where: { classId } });
 
-		return successResponse(res, 200, students);
+		const data = { students, totals };
+		// data.totals = totals;
+		return successResponse(res, 200, data);
 	} catch (error) {
 		errorResponse(res, error, []);
 	}
@@ -133,12 +120,17 @@ exports.getStudentInClass = async (req, res, _) => {
 		const { classId, studentId } = req.params;
 		const classroom = await Classes.findByPk(classId);
 		if (!classroom) {
+			throwError(`Couldn't find classroom`, 404);
 		}
 
 		const studentsInClass = await classroom.getStudents({
 			where: { id: studentId },
+			joinTableAttributes: [],
 		});
-		successResponse(res, 200, { student: studentsInClass });
+		if (!studentsInClass[0]) {
+			throwError(`Couldn't find student`, 404);
+		}
+		successResponse(res, 200, studentsInClass[0]);
 
 		// successResponse(res, 200, { id, fullname, dob, majorId });
 	} catch (error) {
@@ -153,7 +145,7 @@ exports.getClassesExams = async (req, res, _) => {
 		const exams = await user.getClasses({
 			include: [{ model: Exam }, { model: Lecture, attributes: ['name'] }],
 			attributes: ['name'],
-			through: [],
+			joinTableAttributes: [],
 			// raw: true,
 			nest: true,
 		});
@@ -167,20 +159,12 @@ exports.getClassExams = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
 		const { user } = req;
-		// const foundedClass = await Classes.findByPk(classId);
-		const foundedClass = await user.getClasses({
-			where: { id: classId },
-			include: [
-				{
-					model: Lecture,
-				},
-			],
-		});
+		const foundedClass = await Classes.findByPk(classId);
 
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
 		}
-		const exams = await foundedClass[0].getExams({
+		const exams = await foundedClass.getExams({
 			include: [
 				{
 					model: Student_Result,
@@ -189,11 +173,11 @@ exports.getClassExams = async (req, res, _) => {
 				},
 			],
 			attributes: ['name', 'id', 'duration', 'totalQuestions'],
-			raw: true,
-			nest: false,
+			// raw: true,
+			// nest: false,
 		});
 
-		successResponse(res, 200, { foundedClass, exams });
+		successResponse(res, 200, exams[0]);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -272,16 +256,40 @@ exports.postClass = async (req, res, _) => {
 			throwError(errors.array(), 400);
 		}
 		const { user } = req;
-		const { id, name, password, year, semester, lectureId } = req.body;
-		await user.addClass(
-			await Classes.create({
-				name,
-				password,
-				semester,
-				year,
-				lectureId,
-			})
-		);
+		const { id, name, password, year, semester, lectureId, classExcel } =
+			req.body;
+		const newClass = await Classes.create({
+			name,
+			password,
+			semester,
+			year,
+			lectureId,
+		});
+
+		await user.addClass(newClass);
+		if (classExcel) {
+			const file = req.file;
+			const filePath = file.path;
+			const workbook = XLSX.readFile(
+				// path.join(__dirname, '..', 'excels/Book1.xlsx')
+				filePath
+			);
+			let worksheet = {};
+			worksheet['Sheet1'] = XLSX.utils.sheet_to_json(workbook.Sheets['Sheet1']);
+			const data = worksheet.Sheet1;
+			data.forEach(async (student, number) => {
+				const cuttedDOB = student['ngày sinh'].split('/') || new Date();
+				const year = cuttedDOB[2];
+				const month = cuttedDOB[1];
+				const day = cuttedDOB[0];
+				await newClass.createClassStudent({
+					id: student['MSSV'],
+					dob: new Date(year, month, day),
+					fullname: student['Họ tên'] || student['Họ lót'] + student['Tên'],
+					foreignKey: student['chuyên ngành'] || student['Mã lớp'].slice(0, 3),
+				});
+			});
+		}
 
 		successResponse(res, 201, {}, req.method);
 	} catch (error) {
@@ -348,37 +356,42 @@ exports.putClass = async (req, res, _) => {
 };
 
 exports.putClassStudent = async (req, res, _) => {
-	// try {
-	// 	const { classId } = req.params;
-	// 	const classIsFound = await Classes.findByPk(classId);
-	// 	if (!classIsFound) {
-	// 		throwError('Class not found', 404);
-	// 	}
-	// 	const file = req.file;
-	// 	const filePath = file.path;
-	// 	const workbook = XLSX.readFile(
-	// 		path.join(__dirname, '..', 'excels/Book1.xlsx')
-	// 		// filePath
-	// 	);
-	// 	let worksheet = {};
-	// 	worksheet['Sheet1'] = XLSX.utils.sheet_to_json(workbook.Sheets['Sheet1']);
-	// 	const data = worksheet.Sheet1;
-	// 	data.forEach(async (student, number) => {
-	// 		const cuttedDOB = student['ngày sinh'].split('/');
-	// 		const year = cuttedDOB[2];
-	// 		const month = cuttedDOB[1];
-	// 		const day = cuttedDOB[0];
-	// 		await classIsFound.createClassStudent({
-	// 			id: student['MSSV'],
-	// 			dob: new Date(year, month, day),
-	// 			fullname: student['Tên'] || student['Họ tên'],
-	// 			foreignKey: student['chuyên ngành'],
-	// 		});
-	// 	});
-	// 	successResponse(res, 200, data);
-	// } catch (error) {
-	// 	errorResponse(res, error, [{}]);
-	// }
+	try {
+		const { classId, studentId } = req.params;
+		const foundedClass = await Classes.findByPk(classId);
+		if (!foundedClass) {
+			throwError(`Could not find class`, 404);
+		}
+		const student = foundedClass.getStudents({
+			where: {
+				id: studentId,
+			},
+		});
+	} catch (error) {}
+};
+
+exports.patchClassIsLock = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const { isLock } = req.body;
+		const foundedClass = await Classes.findByPk(classId, {
+			include: [
+				{
+					model: Lecture,
+					attributes: ['name'],
+				},
+			],
+			attributes: ['id', 'name'],
+		});
+		if (!foundedClass) {
+			throwError(`Could not find class`, 404);
+		}
+		foundedClass.isLock = isLock;
+		foundedClass.save();
+		successResponse(res, 200, foundedClass, req.put);
+	} catch (error) {
+		errorResponse(res, error);
+	}
 };
 
 exports.deleteClass = async (req, res, _) => {
