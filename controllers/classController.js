@@ -22,7 +22,6 @@ const Student_Result = require('../models/student_result');
 const Exam = require('../models/exam');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
-	console.log(file);
 	fs.unlink(file, (err) => console.log(err));
 };
 
@@ -106,9 +105,9 @@ exports.getAllStudent = async (req, res, _) => {
 			offset: (page - 1) * perPage,
 			limit: perPage,
 		});
-		const totals = await classDetails.count({ where: { classId } });
+		const total = await classDetails.count({ where: { classId } });
 
-		const data = { students, totals };
+		const data = { data: students, total };
 		// data.totals = totals;
 		return successResponse(res, 200, data);
 	} catch (error) {
@@ -268,21 +267,25 @@ exports.postClass = async (req, res, _) => {
 		});
 
 		await user.addClass(newClass);
-		if (classExcel) {
-			const file = req.file;
-			const filePath = file.path;
+		let file;
+		if ((file = req.file)) {
+			const filePath = await file.path;
 			const workbook = XLSX.readFile(
 				// path.join(__dirname, '..', 'excels/Book1.xlsx')
 				filePath
 			);
+			console.log(filePath);
 			let worksheet = {};
 			worksheet['Sheet1'] = XLSX.utils.sheet_to_json(workbook.Sheets['Sheet1']);
 			const data = worksheet.Sheet1;
+			console.log(data);
 			data.forEach(async (student, number) => {
-				const cuttedDOB = student['ngày sinh'].split('/') || new Date();
+				const cuttedDOB = student['ngày sinh']?.split('/') || new Date();
 				const year = cuttedDOB[2];
 				const month = cuttedDOB[1];
 				const day = cuttedDOB[0];
+
+				console.log(1);
 				await newClass.createClassStudent({
 					id: student['MSSV'],
 					dob: new Date(year, month, day),
@@ -290,10 +293,20 @@ exports.postClass = async (req, res, _) => {
 					foreignKey: student['chuyên ngành'] || student['Mã lớp'].slice(0, 3),
 				});
 			});
+			const newTotal = await classDetails.count({
+				where: { classId: newClass.id },
+			});
+			await newClass.update({
+				totalStudent: newTotal,
+			});
+			deleteExcel(filePath);
 		}
 
 		successResponse(res, 201, {}, req.method);
 	} catch (error) {
+		deleteExcel(req.file.path);
+
+		console.log(error);
 		errorResponse(res, error);
 	}
 };

@@ -102,7 +102,6 @@ router.post(
 			.isDate()
 			.withMessage('invalid day received'),
 		// .withMessage('must be a date'),
-		body('isLock').notEmpty().trim().isIn([true, false]),
 		body('lectureId')
 			.trim()
 			.notEmpty()

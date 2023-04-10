@@ -3,8 +3,6 @@ const adminController = require('../controllers/admin');
 
 router.get('/accounts', adminController.getAllAccounts);
 
-router.get('/another-route', (req, res) => {
-	// router code here
-});
+router.get('/classes', adminController.getAllClasses);
 
 module.exports = router;
