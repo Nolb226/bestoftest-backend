@@ -390,7 +390,8 @@ exports.patchClassIsLock = async (req, res, _) => {
 		await foundedClass.update({
 			isLock,
 		});
-		successResponse(res, 200, foundedClass, req.put);
+		console.log(isLock);
+		successResponse(res, 200, foundedClass, req.method);
 	} catch (error) {
 		console.log(error);
 		errorResponse(res, error);
