@@ -41,12 +41,13 @@ exports.getClasses = async (req, res, _) => {
 				{ model: Teacher, attributes: ['id', 'fullname'] },
 				{ model: Lecture, attributes: ['id', 'name'] },
 			],
-			attributes: ['id', 'name'],
+			attributes: ['id', 'name', 'isLock'],
 			offset: pageSize * (page - 1),
 			limit: pageSize,
 		});
+		const total = await classDetails.count({ where: { studentId: user.id } });
 
-		return successResponse(res, 200, classes);
+		return successResponse(res, 200, { data: classes, total });
 	} catch (error) {
 		errorResponse(res, error, [{}]);
 	}
