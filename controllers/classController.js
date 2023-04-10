@@ -391,6 +391,7 @@ exports.patchClassIsLock = async (req, res, _) => {
 		await foundedClass.save();
 		successResponse(res, 200, foundedClass, req.put);
 	} catch (error) {
+		console.log(error);
 		errorResponse(res, error);
 	}
 };
