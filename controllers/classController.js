@@ -382,13 +382,13 @@ exports.patchClassIsLock = async (req, res, _) => {
 					attributes: ['name'],
 				},
 			],
-			attributes: ['id', 'name'],
+			attributes: ['id', 'name', 'isLock'],
 		});
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
 		}
 		foundedClass.isLock = isLock;
-		foundedClass.save();
+		await foundedClass.save();
 		successResponse(res, 200, foundedClass, req.put);
 	} catch (error) {
 		errorResponse(res, error);
