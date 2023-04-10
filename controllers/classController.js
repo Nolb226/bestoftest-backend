@@ -375,6 +375,7 @@ exports.patchClassIsLock = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
 		const { isLock } = req.body;
+		console.log(req.body);
 		const foundedClass = await Classes.findByPk(classId, {
 			include: [
 				{
@@ -390,7 +391,6 @@ exports.patchClassIsLock = async (req, res, _) => {
 		await foundedClass.update({
 			isLock,
 		});
-		console.log(isLock);
 		successResponse(res, 200, foundedClass, req.method);
 	} catch (error) {
 		console.log(error);
