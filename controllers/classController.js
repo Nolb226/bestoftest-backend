@@ -387,8 +387,9 @@ exports.patchClassIsLock = async (req, res, _) => {
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
 		}
-		foundedClass.isLock = isLock;
-		await foundedClass.save();
+		await foundedClass.update({
+			isLock,
+		});
 		successResponse(res, 200, foundedClass, req.put);
 	} catch (error) {
 		console.log(error);
