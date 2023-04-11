@@ -17,7 +17,7 @@ if (node_env === 'production') {
 	sequelize = new Sequelize('hoang', 'root', '', {
 		host: 'localhost',
 		dialect: 'mysql',
-		port: '3307',
+		port: '3306',
 	});
 	console.log(node_env, sequelize);
 } else {

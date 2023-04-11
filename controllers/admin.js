@@ -1,5 +1,6 @@
 const Account = require('../models/account');
 const Class = require('../models/class');
+const Permission_Group = require('../models/permission_group');
 const { successResponse, errorResponse } = require('../util/helper');
 
 exports.getAllAccounts = async (req, res, _) => {
@@ -28,4 +29,12 @@ exports.getAllClasses = async (req, res, _) => {
 		});
 		successResponse(res, 200, classes, req.method);
 	} catch (error) {}
+};
+exports.getAllPermissions = async (req, res, _) => {
+	try {
+		const permissions = await Permission_Group.findAll();
+		successResponse(res, 200, permissions, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
 };

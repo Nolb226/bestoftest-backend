@@ -5,4 +5,5 @@ router.get('/accounts', adminController.getAllAccounts);
 
 router.get('/classes', adminController.getAllClasses);
 
+router.get('/permissions', adminController.getAllPermissions);
 module.exports = router;

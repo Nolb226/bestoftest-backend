@@ -9,11 +9,11 @@ const Class = sequelize.define(
 	'class',
 	{
 		id: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.STRING,
 			// type: DataTypes.STRING(10),
 			allowNull: false,
 			unique: true,
-			autoIncrement: true,
+			// autoIncrement: true,
 			primaryKey: true,
 		},
 		totalStudent: {

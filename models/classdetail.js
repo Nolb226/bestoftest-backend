@@ -21,7 +21,7 @@ const classDetails = sequelize.define(
 			allowNull: false,
 		},
 		classId: {
-			type: DataTypes.STRING(10),
+			type: DataTypes.STRING,
 			references: {
 				model: Class,
 				key: 'id',

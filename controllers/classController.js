@@ -20,6 +20,8 @@ const Teacher = require('../models/teacher');
 const Lecture = require('../models/lecture');
 const Student_Result = require('../models/student_result');
 const Exam = require('../models/exam');
+const Class = require('../models/class');
+const e = require('express');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	fs.unlink(file, (err) => console.log(err));
@@ -241,14 +243,6 @@ exports.getClassExamStudentResults = async (req, res, _) => {
 	}
 };
 
-// exports.getStudentResultInExcel = async (req, res, next) => {
-// 	try {
-// 		const worksheet = XLSX.
-// 	} catch (error) {
-
-// 	}
-// }
-
 exports.postClass = async (req, res, _) => {
 	try {
 		const errors = validationResult(req);
@@ -311,7 +305,13 @@ exports.postClass = async (req, res, _) => {
 	}
 };
 
-exports.postClassExam = async (req, res) => {};
+exports.postClassExam = async (req, res) => {
+	try {
+		const { type } = req.body;
+		if (type === 0) {
+		}
+	} catch (error) {}
+};
 
 exports.postClassStudent = async (req, res, _) => {
 	try {
@@ -407,6 +407,26 @@ exports.patchClassIsLock = async (req, res, _) => {
 		successResponse(res, 200, foundedClass, req.method);
 	} catch (error) {
 		console.log(error);
+		errorResponse(res, error);
+	}
+};
+
+exports.patchExamIsLock = async (req, res, _) => {
+	try {
+		const { classId, examId } = req.params;
+		const { isLock } = req.body;
+		const classroom = await Class.findByPk(classId);
+		if (!classroom) {
+			throwError('Classroom not found', 404);
+		}
+		const exam = await classroom.getExams({ where: { id: examId } });
+		if (!exam[0]) {
+			throwError('Exam not found', 404);
+		}
+		exam[0].isLock = isLock;
+		await exam[0].save();
+		successResponse(res, 200);
+	} catch (error) {
 		errorResponse(res, error);
 	}
 };

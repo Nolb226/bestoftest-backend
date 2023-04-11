@@ -166,6 +166,7 @@ router.put(
 router.put('/:classId/students', classController.putClassStudent);
 
 router.patch('/:classId', classController.patchClassIsLock);
+router.patch('/:classId/exams/:examId', classController.patchExamIsLock);
 
 router.delete('/:classId/', classController.deleteClass);
 module.exports = router;

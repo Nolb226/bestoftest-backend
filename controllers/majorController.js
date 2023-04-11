@@ -82,7 +82,6 @@ exports.getMajorQuestions = async (req, res, _) => {
 				'status',
 			],
 		});
-		console.log(1);
 		successResponse(res, 200, questions);
 	} catch (error) {
 		errorResponse(res, error);
