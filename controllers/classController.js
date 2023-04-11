@@ -170,7 +170,6 @@ exports.getClassExams = async (req, res, _) => {
 			include: [
 				{
 					model: Student_Result,
-					where: { studentId: user.id },
 					attributes: ['isDone'],
 				},
 			],
@@ -179,7 +178,7 @@ exports.getClassExams = async (req, res, _) => {
 			// nest: false,
 		});
 
-		successResponse(res, 200, exams[0]);
+		successResponse(res, 200, exams);
 	} catch (error) {
 		errorResponse(res, error);
 	}
