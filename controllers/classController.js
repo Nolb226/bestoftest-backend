@@ -170,6 +170,7 @@ exports.getClassExams = async (req, res, _) => {
 			include: [
 				{
 					model: Student_Result,
+					where: { studentId: user.id },
 					attributes: ['isDone'],
 				},
 			],
