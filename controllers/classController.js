@@ -603,22 +603,16 @@ exports.putClassStudent = async (req, res, _) => {
 exports.patchClassIsLock = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		const { isLock } = req.body;
-		console.log(req.body);
-		const foundedClass = await Classes.findByPk(classId, {
-			include: [
-				{
-					model: Lecture,
-					attributes: ['name'],
-				},
-			],
-			attributes: ['id', 'name', 'isLock'],
-		});
+		const field = req.query.field || 'isLock';
+		const fieldData = req.body[field];
+
+		console.log(fieldData);
+		const foundedClass = await Class.findByPk(classId);
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
 		}
 		await foundedClass.update({
-			isLock,
+			[field]: fieldData,
 		});
 		successResponse(res, 200, foundedClass, req.method);
 	} catch (error) {
