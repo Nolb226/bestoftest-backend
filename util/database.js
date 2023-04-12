@@ -6,13 +6,12 @@ const node_env = process.env.NODE_ENV;
 console.log(node_env);
 
 if (node_env === 'production') {
-	sequelize = new Sequelize(
-		'mysql://buo405oid9oh1vm7:xld5vkfrblrm5na2@l0ebsc9jituxzmts.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/aq2zsr3yc0jybqe4',
-		{
-			dialect: 'mysql',
-			migrate: 'safe',
-		}
-	);
+	sequelize = new Sequelize('bestoftest', 'root', '', {
+		host: 'localhost',
+		dialect: 'mysql',
+		port: '3306',
+	});
+
 	console.log(node_env);
 } else if (node_env === 'test ') {
 	sequelize = new Sequelize('hoang', 'root', '', {

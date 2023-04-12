@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "set NODE_ENV=test && nodemon app.js",
-    "start": "set NODE_ENV=production&&node app.js --host '0.0.0.0' --port $PORT",
+    "start": "set NODE_ENV=production&& nodemon app.js",
     "dev": "nodemon app.js"
   },
   "repository": {
