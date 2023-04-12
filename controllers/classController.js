@@ -635,7 +635,7 @@ exports.patchExamIsLock = async (req, res, _) => {
 		}
 		exam[0].isLock = isLock;
 		await exam[0].save();
-		successResponse(res, 200);
+		successResponse(res, 200, exam[0], 'PUT');
 	} catch (error) {
 		errorResponse(res, error);
 	}
