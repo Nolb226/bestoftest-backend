@@ -10,6 +10,7 @@ if (node_env === 'production') {
 		'mysql://qs8bzb9tli4g3ip6:t562arn3ylweb754@grp6m5lz95d9exiz.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/dy0jhdljqz4f0tqo',
 		{
 			dialect: 'mysql',
+			migrate: 'safe',
 		}
 	);
 	console.log(node_env);
