@@ -12,7 +12,20 @@ exports.getQuestions = async function (req, res, _) {
 		const { limit } = req.query;
 		const chapterIds = chaptersArray.join('" OR chapterId= "');
 		const result = await sequelize.query(
-			`SELECT questions.id,questions.status as status,description,correctAns,answerA,answerB,answerC,answerD, chapters.id as chapterId FROM exams JOIN classes ON exams.classId = classes.id JOIN lectures ON classes.lectureId= lectures.id JOIN Chapters ON lectures.Id= chapters.lectureId JOIN questions ON questions.chapterId=chapters.id WHERE chapterId ="${chapterIds}" AND NOT questions.status= "2" ORDER BY Rand() LIMIT ${limit};`,
+			`SELECT questions.id,questions.status as status,description,correctAns,answerA,answerB,answerC,answerD, chapters.id as chapterId 
+			FROM 		exams 
+			JOIN 		classes 
+			ON 			exams.classId 		= classes.id 
+			JOIN 		lectures 
+			ON 			classes.lectureId	= lectures.id 
+			JOIN 		Chapters 
+			ON 			lectures.Id			= chapters.lectureId 
+			JOIN 		questions 
+			ON 			questions.chapterId	=chapters.id 
+			WHERE 		chapterId 			="${chapterIds}" 
+			AND NOT 	questions.status	= "2"
+			ORDER BY 	Rand() 
+			LIMIT 		${limit};`,
 			{ type: sequelize.QueryTypes.SELECT }
 		);
 

@@ -176,6 +176,16 @@ const storage = multer.diskStorage({
 	},
 });
 
+const fileFilter = (req, file, cb) => {
+	const filetypes = /xlsx|xls/;
+	const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	if (extname) {
+		return cb(null, true);
+	} else {
+		cb('Error: The file must be an XLS or XLSX file!');
+	}
+};
+
 //Routes define
 const authRoutes = require('./routes/auth');
 const questionsRoutes = require('./routes/question');
@@ -188,10 +198,11 @@ const majorRoutes = require('./routes/major');
 const lectureRoutes = require('./routes/lecture');
 const adminRoutes = require('./routes/admin');
 const { checkPermission } = require('./middleware/check-permission');
+const { errorResponse, throwError } = require('./util/helper');
 //Middleware
 
 app.use(bodyParser.json());
-app.use(multer({ storage }).single('classExcel'));
+app.use(multer({ storage, fileFilter }).single('classExcel'));
 // app.use(express.static(path.join(__dirname, 'excels')));
 app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -219,6 +230,14 @@ app.use('/test', testRoutes);
 console.log(port);
 app.get('/', (req, res) => {
 	res.send(Hiii);
+});
+
+app.use(function (err, req, res, next) {
+	// Handle the error
+	console.error(err);
+
+	// Send an error response to the client
+	errorResponse(res, err);
 });
 
 sequelize

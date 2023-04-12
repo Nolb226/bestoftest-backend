@@ -73,6 +73,8 @@ get specific students from the current class
 router.get('/:classId/students/:studentId', classController.getStudentInClass);
 // router.use('/:classId/students', checkPermission, passingClass, studentRoutes);
 
+router.get('/:classId/exams/results', classController.getClassExamsResult);
+
 router.get('/:classId/exams', classController.getClassExams);
 router.get('/:classId/exams/:examId', classController.getClassExam);
 router.get(
@@ -85,7 +87,6 @@ router.get(
 router.post(
 	'/',
 	[
-		body('name').notEmpty().trim(),
 		body('password').notEmpty().trim(),
 		body('semester')
 			.trim()
@@ -121,9 +122,11 @@ router.post(
 
 router.post('/:classId/students', classController.postClassStudent);
 
-router.post('/:classId/exams', [body()]);
+router.post('/:classId/exams', classController.postClassExam);
 
 router.post('/:classId/exams/students/:studentsId');
+
+//METHOD : PUT
 
 router.put(
 	'/:classId',
@@ -165,8 +168,16 @@ router.put(
 
 router.put('/:classId/students', classController.putClassStudent);
 
+//METHOD : PATCH
+
 router.patch('/:classId', classController.patchClassIsLock);
+
 router.patch('/:classId/exams/:examId', classController.patchExamIsLock);
 
+//METHOD : DELETE
 router.delete('/:classId/', classController.deleteClass);
+router.delete(
+	'/:classId/students/:studentId',
+	classController.deleteClassStudent
+);
 module.exports = router;

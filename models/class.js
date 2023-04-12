@@ -3,8 +3,12 @@ const { DataTypes, Op } = require('sequelize');
 const Exam = require('./exam');
 const Student = require('./student');
 const Account = require('./account');
-const dayjs = require('dayjs');
 const classDetails = require('./classdetail');
+const Major = require('./major');
+const dayjs = require('dayjs');
+const bcrypt = require('bcryptjs');
+const { throwError } = require('../util/helper');
+const Lecture = require('./lecture');
 const Class = sequelize.define(
 	'class',
 	{
@@ -32,7 +36,7 @@ const Class = sequelize.define(
 			type: DataTypes.DATEONLY,
 			allowNull: false,
 			get: function () {
-				return dayjs(this.getDataValue('year')).format('YY');
+				return dayjs(this.getDataValue('year')).format('YYYY');
 			},
 		},
 		semester: {
@@ -55,26 +59,22 @@ Class.prototype.createClassExam = async function (examData) {
 };
 
 Class.prototype.createClassStudent = async function (studentData) {
-	const student =
-		(await Student.findByPk(studentData.id)) ||
-		(await Student.createAccount(studentData));
-	this.totalStudent += 1;
-	const existingDetail = await classDetails.findOne({
-		where: { [Op.and]: { classId: this.id, studentId: student.id } },
+	const { id } = studentData;
+	const account = await Account.create({
+		type: 'SV',
+		// password: await bcrypt.hash(studentData.password),
+		password: bcrypt.hash(studentData.password, 10),
 	});
-
-	if (!existingDetail) {
-		const newDetail = await classDetails.create({
-			classId: this.id,
-			studentId: student.id,
-		});
+	const [student, created] = await Student.findOrCreate({
+		where: { id },
+		defaults: studentData,
+	});
+	if (created) {
+		await student.setAccount(account);
 	}
-
-	// await this.addStudent(student);
-	// await student.addClass(this);
-	// await student.addClass(this);
-	// await this.addStudent(student);
-	await this.save();
+	const major = await Major.findByPk(studentData.majorId);
+	await student.setMajor(major);
+	await this.addStudent(student);
 	return student;
 };
 
@@ -97,13 +97,16 @@ Class.prototype.test = async function () {
 	console.log(this.lectureId);
 };
 
-Class.addHook('beforeCreate', async function (classInstanse, options) {
-	const lectureId = classInstanse.lectureId;
-	const number = await Class.count({ where: { lectureId } });
-	console.log(number);
-	classInstanse.id = `${lectureId}${classInstanse.year}${
-		classInstanse.semester
-	}-${number + 1}`;
+Class.beforeValidate(async function (classInstance) {
+	const { lectureId, year, semester } = classInstance;
+	const number = await Class.count({
+		where: { [Op.and]: [{ lectureId }, { year }, { semester }] },
+	});
+	classInstance.id = `${lectureId}${year.slice(-2)}${semester}-${number + 1}`;
+	classInstance.name = `${lectureId} - Nhóm ${(number + 1 + '').padStart(
+		2,
+		'0'
+	)} - ${year}HK${semester}`;
 });
 
 module.exports = Class;
