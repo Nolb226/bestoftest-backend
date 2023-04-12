@@ -81,7 +81,7 @@ exports.getClassEdit = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
 		const foundedClass = await Classes.findByPk(classId, {
-			attributes: ['year', 'id', 'name', 'semester', 'password'],
+			attributes: ['id', 'name', 'semester', 'password'],
 		});
 		// console.log(foundedClass);
 		if (!foundedClass) {
