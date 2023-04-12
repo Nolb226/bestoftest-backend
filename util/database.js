@@ -7,7 +7,7 @@ console.log(node_env);
 
 if (node_env === 'production') {
 	sequelize = new Sequelize(
-		'mysql://qs8bzb9tli4g3ip6:t562arn3ylweb754@grp6m5lz95d9exiz.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/dy0jhdljqz4f0tqo',
+		'mysql://buo405oid9oh1vm7:xld5vkfrblrm5na2@l0ebsc9jituxzmts.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/aq2zsr3yc0jybqe4',
 		{
 			dialect: 'mysql',
 			migrate: 'safe',
